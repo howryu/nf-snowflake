@@ -7,6 +7,7 @@ import nextflow.processor.TaskHandler
 import nextflow.processor.TaskMonitor
 import nextflow.processor.TaskPollingMonitor
 import nextflow.processor.TaskRun
+import nextflow.snowflake.config.SnowflakeConfig
 import nextflow.util.ServiceName
 import nextflow.util.Duration
 import org.pf4j.ExtensionPoint
@@ -23,7 +24,7 @@ import java.sql.ResultSet
 @ServiceName('snowflake')
 @CompileStatic
 class SnowflakeExecutor extends Executor implements ExtensionPoint {
-    Map snowflakeConfig
+    SnowflakeConfig snowflakeConfig
     
     /**
      * A path where executable scripts from bin directory are copied
@@ -47,7 +48,7 @@ class SnowflakeExecutor extends Executor implements ExtensionPoint {
         Statement stmt = conn.createStatement();
         final Map<String, String> registryMappings = new HashMap<>()
 
-        String mappings = snowflakeConfig.get("registryMappings", "")
+        String mappings = snowflakeConfig.registryMappings ?: ""
 
         // Skip processing if mappings is empty
         if (mappings == null || mappings.trim().isEmpty()) {
@@ -119,7 +120,8 @@ class SnowflakeExecutor extends Executor implements ExtensionPoint {
     @Override
     protected void register() {
         super.register()
-        snowflakeConfig = session.config.navigate("snowflake") as Map
+        final Map configMap = session.config.navigate("snowflake") as Map
+        snowflakeConfig = new SnowflakeConfig(configMap ?: [:])
 
         // Validate that workDir uses snowflake:// scheme
         validateWorkDir()

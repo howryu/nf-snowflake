@@ -174,7 +174,7 @@ class SnowflakeTaskHandler extends TaskHandler {
 
         final String spec = buildJobServiceSpec()
         final String computePoolEnv = System.getenv("computePool")
-        final String defaultComputePool = computePoolEnv!=null ? computePoolEnv : executor.snowflakeConfig.get("computePool")
+        final String defaultComputePool = computePoolEnv!=null ? computePoolEnv : executor.snowflakeConfig.computePool
         final String jobComment = String.format("nextflow task name: %s", task.getName())
 
         String executeSql = String.format("""
