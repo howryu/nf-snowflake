@@ -1,4 +1,4 @@
-FROM nextflow/nextflow:25.04.6
+FROM nextflow/nextflow:25.10.4
 
 # Define version argument with default value
 ARG PLUGIN_VERSION=1.1.0
